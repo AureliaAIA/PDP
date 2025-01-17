@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Pengajuan Kredit Kendaraan</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">AutoCredit System</div>
+      <ul>
+        <li><a href="#" class="active">Beranda</a></li>
+        <li><a href="#pengajuan">Pengajuan</a></li>
+        <li><a href="#status">Cek Status</a></li>
+        <li><a href="#dokumen">Dokumen</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <section id="beranda" class="active-section">
+        <h1>Selamat Datang di Sistem Pengajuan Kredit Kendaraan</h1>
+        <div class="features">
+          <div class="feature-card">
+            <h3>Pengajuan Online</h3>
+            <p>Ajukan kredit kendaraan secara online dengan mudah dan cepat</p>
+            <button onclick="showSection('pengajuan')">Ajukan Sekarang</button>
+          </div>
+          <div class="feature-card">
+            <h3>Cek Status</h3>
+            <p>Pantau status pengajuan kredit Anda secara real-time</p>
+            <button onclick="showSection('status')">Cek Status</button>
+          </div>
+          <div class="feature-card">
+            <h3>Upload Dokumen</h3>
+            <p>Upload dan kelola dokumen persyaratan dengan mudah</p>
+            <button onclick="showSection('dokumen')">Upload Dokumen</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="pengajuan">
+        <h2>Form Pengajuan Kredit</h2>
+        <form id="creditForm" onsubmit="submitCreditApplication(event)">
+          <div class="form-group">
+            <h3>Data Pribadi</h3>
+            <input type="text" id="nama" placeholder="Nama Lengkap" required>
+            <input type="text" id="nik" placeholder="NIK" required>
+            <input type="date" id="tanggalLahir" required>
+            <select id="statusPerkawinan" required onchange="toggleSpouseData()">
+                <option value="">Status Perkawinan</option>
+                <option value="single">Belum Menikah</option>
+                <option value="married">Menikah</option>
+            </select>
+
+            <!-- New spouse data section -->
+            <div id="spouseData" style="display: none;">
+                <h4>Data Pasangan</h4>
+                <input type="text" id="namaPasangan" placeholder="Nama Pasangan">
+                <input type="text" id="nikPasangan" placeholder="NIK Pasangan">
+                <input type="date" id="tanggalLahirPasangan">
+                <input type="text" id="pekerjaanPasangan" placeholder="Pekerjaan Pasangan">
+                <input type="number" id="penghasilanPasangan" placeholder="Penghasilan Pasangan/Bulan">
+            </div>
+        </div>
+
+           <div class="form-group">
+                    <h3>Data Kendaraan</h3>
+                    <select id="merkKendaraan" required>
+                        <option value="">Pilih Merk</option>
+                        <option value="toyota">Toyota</option>
+                        <option value="honda">Honda</option>
+                        <option value="suzuki">Suzuki</option>
+                    </select>
+                    <input type="text" id="modelKendaraan" placeholder="Model Kendaraan" required>
+                    
+                    <!-- New vehicle type dropdown -->
+                    <select id="tipeKendaraan" required>
+                        <option value="">Pilih Tipe Kendaraan</option>
+                        <option value="sedan">Sedan</option>
+                        <option value="suv">SUV</option>
+                        <option value="mpv">MPV</option>
+                        <option value="hatchback">Hatchback</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+
+                    <!-- New vehicle color dropdown -->
+                    <select id="warnaKendaraan" required>
+                        <option value="">Pilih Warna</option>
+                        <option value="hitam">Hitam</option>
+                        <option value="putih">Putih</option>
+                        <option value="silver">Silver</option>
+                        <option value="merah">Merah</option>
+                        <option value="biru">Biru</option>
+                        <option value="abu">Abu-abu</option>
+                        <option value="coklat">Coklat</option>
+                    </select>
+            <input
+              type="number"
+              id="hargaKendaraan"
+              placeholder="Harga Kendaraan"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <h3>Data Pinjaman</h3>
+            
+            <!-- Down Payment Section -->
+            <div class="dp-container">
+                <label>Down Payment (DP)</label>
+                <div class="dp-input-group">
+                    <input type="number" id="dpPercentage" min="20" max="70" placeholder="Persentase DP" required>
+                    <span class="percentage-sign">%</span>
+                    <input type="number" id="dpAmount" placeholder="Jumlah DP">
+                </div>
+            </div>
+      
+            <!-- Loan Duration -->
+            <div class="loan-duration">
+                <label>Lama Kredit</label>
+                <select id="lamaKredit" required onchange="calculateLoan()">
+                    <option value="">Pilih Tenor</option>
+                    <option value="12">12 Bulan</option>
+                    <option value="24">24 Bulan</option>
+                    <option value="36">36 Bulan</option>
+                    <option value="48">48 Bulan</option>
+                    <option value="60">60 Bulan</option>
+                </select>
+            </div>
+      
+            <!-- Insurance Selection -->
+            <div class="insurance-section">
+                <label>Asuransi</label>
+                <select id="jenisAsuransi" required onchange="calculateLoan()">
+                    <option value="">Pilih Jenis Asuransi</option>
+                    <option value="comprehensive">All Risk (Comprehensive)</option>
+                    <option value="tlo">TLO (Total Loss Only)</option>
+                </select>
+                <div class="insurance-info"></div>
+            </div>
+      
+            <!-- Loan Summary -->
+            <div class="loan-summary">
+                <h4>Ringkasan Pinjaman</h4>
+                <div class="summary-item">
+                    <span>Harga Kendaraan:</span>
+                    <span id="summaryHargaKendaraan">Rp 0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Down Payment:</span>
+                    <span id="summaryDP">Rp 0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Pokok Pinjaman:</span>
+                    <span id="summaryPokokPinjaman">Rp 0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Bunga per Tahun:</span>
+                    <span id="summaryBunga">0%</span>
+                </div>
+                <div class="summary-item">
+                    <span>Biaya Asuransi:</span>
+                    <span id="summaryAsuransi">Rp 0</span>
+                </div>
+                <div class="summary-item total">
+                    <span>Angsuran per Bulan:</span>
+                    <span id="summaryAngsuran">Rp 0</span>
+                </div>
+            </div>
+        </div>
+
+          <div class="form-group">
+            <h3>Upload Dokumen</h3>
+            <div class="upload-container">
+              <label for="ktpUpload">KTP</label>
+              <input type="file" id="ktpUpload" accept="image/*" required />
+            </div>
+            <div class="upload-container">
+              <label for="kkUpload">Kartu Keluarga</label>
+              <input type="file" id="kkUpload" accept="image/*" required />
+            </div>
+          </div>
+
+          <button type="submit">Submit Pengajuan</button>
+        </form>
+      </section>
+
+      <section id="status">
+        <h2>Status Pengajuan</h2>
+        <div class="status-tracker">
+          <input type="text" id="applicationId" placeholder="Nomor Pengajuan" />
+          <button onclick="checkStatus()">Cek Status</button>
+          <div id="statusResult"></div>
+        </div>
+
+        <section id="dokumen">
+          <h2>Manajemen Dokumen</h2>
+          <div class="document-manager">
+            <div class="upload-section">
+              <h3>Upload Dokumen Tambahan</h3>
+              <input type="file" id="additionalDocs" multiple />
+              <button onclick="uploadDocuments()">Upload</button>
+            </div>
+            <div class="document-list">
+              <h3>Dokumen Tersimpan</h3>
+              <div id="documentsList"></div>
+            </div>
+          </div>
+        </section>
+
+
+      </section>
+
+
+    </main>
+
+   
+
+    <script src="script.js"></script>
+  </body>
+</html>
